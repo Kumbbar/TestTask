@@ -68,7 +68,7 @@ def edit_object():
         modified_object.latitude = latitude
         modified_object.save()
 
-        return Response(json.dumps(target_object), status=201, mimetype='application/json')
+        return Response(json.dumps(target_object), status=200, mimetype='application/json')
     except (InvalidKeysError, InvalidValueError, ObjectDoesNotExistError ) as e:
         return Response(json.dumps({
             'message': str(e),
