@@ -14,3 +14,4 @@ class Object(Model):
         database = db
         order_by = 'id'
         db_table = 'objects'
+

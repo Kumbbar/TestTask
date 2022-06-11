@@ -12,13 +12,13 @@ app = Flask(__name__)
 @app.route('/objects/create', methods=['POST'])
 def create_object():
     new_object = request.json
-    if check_keys(list(dict(new_object).keys())):
+    if validate_keys(tuple(dict(new_object).keys())):
         return Response(json.dumps(KEYS_EXCEPTION), status=422, mimetype='application/json')
 
     title, longitude, latitude = new_object['title'], new_object['longitude'], new_object['latitude']
 
-    if check_title(title) or check_longitude(longitude) or check_latitude(latitude):
-        error_message = check_all_errors_and_get_error_message(title, longitude, latitude)
+    if validate_title(title) or validate_longitude(longitude) or validate_latitude(latitude):
+        error_message = validate_all_data(title, longitude, latitude)
         return Response(json.dumps({
             'location': [longitude, latitude],
             'message': error_message,
@@ -32,12 +32,12 @@ def create_object():
 @app.route('/objects/get', methods=['GET'])
 def get_object():
     data = request.json
-    if check_key(list(dict(data).keys())):
+    if validate_key(tuple(dict(data).keys())):
         return Response(json.dumps(KEY_EXCEPTION), status=422, mimetype='application/json')
 
     title = data['title']
-    if check_title(title):
-        error_message = check_all_errors_and_get_error_message(title)
+    if validate_title(title):
+        error_message = validate_all_data(title)
         return Response(json.dumps({
             'message': error_message,
             'error_type': 'InvalidValue'
@@ -51,7 +51,8 @@ def get_object():
                 'longitude': result_object.longitude,
                 'latitude': result_object.latitude
             }), status=422, mimetype='application/json')
-    except DoesNotExist:
+    except DoesNotExist as e:
+        print(e.__class__.__name__)
         return Response(json.dumps(OBJECT_DOES_NOT_EXIST), status=422, mimetype='application/json')
 
 

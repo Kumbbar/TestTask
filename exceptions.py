@@ -13,7 +13,26 @@ OBJECT_DOES_NOT_EXIST = {
     'error_type': 'ObjectDoesNotExist'
 }
 
-
 OBJECT_ALREADY_EXISTS = {
 
 }
+
+
+class InvalidKeysError(Exception):
+    pass
+
+
+class InvalidKeyError(Exception):
+    pass
+
+
+class InvalidValueError(Exception):
+    pass
+
+
+class ObjectDoesNotExistError(Exception):
+    pass
+
+
+class ObjectAlreadyExistsError(Exception):
+    pass
