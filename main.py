@@ -4,7 +4,7 @@ from exceptions import InvalidKeysError, InvalidKeyError, InvalidValueError, Obj
     ObjectAlreadyExistsError
 import json
 from database.models import Object
-
+from distance_calculator import get_distance_between_two_objects
 app = Flask(__name__)
 
 
@@ -69,7 +69,7 @@ def edit_object():
         modified_object.save()
 
         return Response(json.dumps(target_object), status=200, mimetype='application/json')
-    except (InvalidKeysError, InvalidValueError, ObjectDoesNotExistError ) as e:
+    except (InvalidKeysError, InvalidValueError, ObjectDoesNotExistError) as e:
         return Response(json.dumps({
             'message': str(e),
             'error_type': str(e.__class__.__name__)
@@ -98,9 +98,18 @@ def delete_object() -> Response:
         }), status=422, mimetype='application/json')
 
 
-@app.route('/objects/calculate_distance', methods=['GET'])
+@app.route('/objects/calculate_distance', methods=['POST', 'GET'])
 def calculate_distance() -> Response:
-    pass
+    titles = request.json
+    first_object_title, second_second_title = check_calculate_distance_request(titles)
+    first_object = Object.get(title=first_object_title)
+    second_object = Object.get(title=second_second_title)
+    distance = get_distance_between_two_objects(first_object, second_object)
+    return Response(json.dumps({
+        "title": f"Response Calculate Distance between {first_object_title} and {second_second_title} \
+         in kilometers",
+        "distance": round(distance, 4)
+    }), status=200, mimetype='application/json')
 
 
 if __name__ == '__main__':

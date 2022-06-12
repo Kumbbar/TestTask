@@ -2,24 +2,36 @@ from typing import Sequence
 from exceptions import InvalidKeysError, InvalidKeyError, InvalidValueError, ObjectDoesNotExistError, \
     ObjectAlreadyExistsError
 from database.models import Object
+from flask import Response
+import json
 
 
 def _validate_key(keys: Sequence) -> None:
-    """Check key count and name"""
+    """Check key count and key name"""
     if len(keys) != 1:
-        raise InvalidKeyError('Invalid key, allowed key - title')
+        raise InvalidKeyError('Missing key, required key - title')
     if keys[0].lower() != 'title':
-        raise InvalidKeyError('Invalid key, allowed key - title')
+        raise InvalidKeyError('Invalid key name, allowed key - title')
     return None
 
 
 def _validate_keys(keys: Sequence) -> None:
-    """Check keys count and names"""
+    """Check keys count and key names"""
     if len(keys) != 3:
-        raise InvalidKeysError('Invalid key, allowed keys - (title, longitude, latitude) all required')
+        raise InvalidKeysError('Missing some keys, required keys - (title, longitude, latitude)')
     for key in keys:
         if key not in ('title', 'longitude', 'latitude'):
-            raise InvalidKeysError('Invalid key, allowed keys - (title, longitude, latitude) all required')
+            raise InvalidKeysError('Invalid key names, allowed keys - (title, longitude, latitude)')
+    return None
+
+
+def _validate_titles_keys(keys: Sequence) -> None:
+    if len(keys) != 2:
+        raise InvalidKeysError('Missing some keys, required keys - '
+                               '(first_object_title, second_object_title), all required')
+    for key in keys:
+        if key not in ('first_object_title', 'second_object_title'):
+            raise InvalidKeysError('Invalid key names, allowed keys - (first_object_title, second_object_title)')
     return None
 
 
@@ -27,21 +39,21 @@ def _validate_title(title: str) -> None:
     """Check correct title length(no more than 100 and not empty)"""
     if isinstance(title, str) and 0 < len(title) <= 100:
         return None
-    raise InvalidValueError('title length should be no more than 100 and not empty, type - string')
+    raise InvalidValueError('Title length should be no more than 100 and not empty, type - string')
 
 
 def _validate_longitude(longitude: float) -> None:
     """Check correct longitude value(no more than 180 and no less than -180)"""
     if isinstance(longitude, float) and -180 <= longitude <= 180:
         return None
-    raise InvalidValueError('correct longitude value should be no more than 180 and no less than -180, type - float)')
+    raise InvalidValueError('Correct longitude value should be no more than 180 and no less than -180, type - float)')
 
 
 def _validate_latitude(latitude: float) -> None:
     """Check correct latitude value(no more than 90 and no less than -90)"""
     if isinstance(latitude, float) and -90 <= latitude <= 90:
         return None
-    raise InvalidValueError('correct latitude value should be no more than 90 and no less than -90, type, float)')
+    raise InvalidValueError('Correct latitude value should be no more than 90 and no less than -90, type, float)')
 
 
 def _validate_all_data(title: str = False, longitude: float = False, latitude: float = False) \
@@ -84,3 +96,24 @@ def check_edit_request(json_request) -> (str, float, float):
     return title, longitude, latitude
 
 
+def check_calculate_distance_request(json_request) -> (str, str):
+    _validate_titles_keys(tuple(dict(json_request).keys()))
+    first_point_title, second_point_title = json_request['first_object_title'], json_request['second_object_title']
+    _validate_title(first_point_title)
+    _validate_title(second_point_title)
+    Object.check_object_not_exists(first_point_title)
+    Object.check_object_not_exists(second_point_title)
+    return first_point_title, second_point_title
+
+
+def validate_all_requests_decorator(func):
+    def wrapper():
+        try:
+            response = func()
+            return response
+        except (InvalidKeysError, InvalidValueError, ObjectDoesNotExistError, ObjectAlreadyExistsError) as e:
+            return Response(json.dumps({
+                'message': str(e),
+                'error_type': str(e.__class__.__name__)
+            }), status=422, mimetype='application/json')
+    return wrapper
