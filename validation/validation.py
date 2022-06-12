@@ -29,7 +29,7 @@ def _validate_titles_keys(keys: Sequence) -> None:
     """Check keys count and key names"""
     if len(keys) != 2:
         raise InvalidKeysError('Missing some keys, required keys - '
-                               '(first_object_title, second_object_title), all required')
+                               '(first_object_title, second_object_title)')
     for key in keys:
         if key not in ('first_object_title', 'second_object_title'):
             raise InvalidKeysError('Invalid key names, allowed keys - (first_object_title, second_object_title)')
