@@ -19,7 +19,7 @@ def create_object() -> Response:
     return Response(json.dumps(new_object), status=201, mimetype='application/json')
 
 
-@app.route('/objects/get', methods=['GET'])
+@app.route('/objects/get', methods=['POST'])
 @except_validation_error_decorator
 def get_object() -> Response:
     """Get object from database by title from json request"""
@@ -34,7 +34,7 @@ def get_object() -> Response:
     }), status=200, mimetype='application/json')
 
 
-@app.route('/objects/get_many', methods=['GET'])
+@app.route('/objects/get_many', methods=['POST'])
 def get_many_objects() -> Response:
     """Return all objects in database"""
     result = []
@@ -62,7 +62,7 @@ def edit_object() -> Response:
     return Response(json.dumps(target_object), status=200, mimetype='application/json')
 
 
-@app.route('/objects/delete', methods=['GET'])
+@app.route('/objects/delete', methods=['POST'])
 @except_validation_error_decorator
 def delete_object() -> Response:
     """Delete object from database by title from json request"""
@@ -78,7 +78,7 @@ def delete_object() -> Response:
     }), status=200, mimetype='application/json')
 
 
-@app.route('/objects/calculate_distance', methods=['POST', 'GET'])
+@app.route('/objects/calculate_distance', methods=['POST'])
 @except_validation_error_decorator
 def calculate_distance() -> Response:
     """Calculate distance between two objects from database by titles from json request"""
