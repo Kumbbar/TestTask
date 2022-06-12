@@ -3,8 +3,6 @@ from exceptions import *
 from validation.validation import _validate_title, _validate_key, _validate_keys, _validate_longitude, \
     _validate_latitude, _validate_all_data, _validate_titles_keys
 
-url = 'http://127.0.0.1:5000'
-
 
 class TestValidation(unittest.TestCase):
     maxDiff = 4000
