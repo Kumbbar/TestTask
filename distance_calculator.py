@@ -19,7 +19,7 @@ def get_distance_between_two_objects(first_object: Object, second_object: Object
                              headers=headers,
                              json=data).json()
     # use geopy if open_route_service returned error
-    if 'routers' in response.keys():
+    if 'routes' in response.keys():
         distance = response['routes'][0]['summary']['distance']
     else:
         distance = geodesic((first_object.latitude, first_object.longitude),

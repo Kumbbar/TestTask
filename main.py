@@ -1,51 +1,42 @@
-from flask import Flask, request, Response
-from validation import *
-from exceptions import InvalidKeysError, InvalidKeyError, InvalidValueError, ObjectDoesNotExistError, \
-    ObjectAlreadyExistsError
+from flask import Flask, request
+from validation.validation import *
+from validation.decorators import except_validation_error_decorator
 import json
 from database.models import Object
 from distance_calculator import get_distance_between_two_objects
+
+
 app = Flask(__name__)
 
 
 @app.route('/objects/create', methods=['POST'])
+@except_validation_error_decorator
 def create_object() -> Response:
+    """Create new object in database with data from json request"""
     new_object = request.json
-    try:
-        title, longitude, latitude = check_create_request(new_object)
-
-        Object.create(title=title, longitude=longitude, latitude=latitude)
-        return Response(json.dumps(new_object), status=201, mimetype='application/json')
-
-    except (InvalidKeysError, InvalidValueError, ObjectAlreadyExistsError) as e:
-        return Response(json.dumps({
-            'message': str(e),
-            'error_type': str(e.__class__.__name__)
-        }), status=422, mimetype='application/json')
+    title, longitude, latitude = check_create_request(new_object)
+    Object.create(title=title, longitude=longitude, latitude=latitude)
+    return Response(json.dumps(new_object), status=201, mimetype='application/json')
 
 
 @app.route('/objects/get', methods=['GET'])
+@except_validation_error_decorator
 def get_object() -> Response:
+    """Get object from database by title from json request"""
     data = request.json
-    try:
-        title = check_get_request(data)
-        result_object = Object.get(title=title)
+    title = check_get_request(data)
+    result_object = Object.get(title=title)
 
-        return Response(json.dumps({
-            'title': result_object.title,
-            'longitude': result_object.longitude,
-            'latitude': result_object.latitude
-        }), status=200, mimetype='application/json')
-
-    except (InvalidKeyError, InvalidValueError, ObjectDoesNotExistError) as e:
-        return Response(json.dumps({
-            'message': str(e),
-            'error_type': str(e.__class__.__name__)
-        }), status=422, mimetype='application/json')
+    return Response(json.dumps({
+        'title': result_object.title,
+        'longitude': result_object.longitude,
+        'latitude': result_object.latitude
+    }), status=200, mimetype='application/json')
 
 
 @app.route('/objects/get_many', methods=['GET'])
-def get_many_objects():
+def get_many_objects() -> Response:
+    """Return all objects in database"""
     result = []
     objects = Object.select()
     for row in objects:
@@ -58,59 +49,51 @@ def get_many_objects():
 
 
 @app.route('/objects/edit', methods=['POST'])
-def edit_object():
+@except_validation_error_decorator
+def edit_object() -> Response:
+    """Edit object longitude and latitude in database by title from json request"""
     target_object = request.json
-    try:
-        title, longitude, latitude = check_edit_request(target_object)
+    title, longitude, latitude = check_edit_request(target_object)
 
-        modified_object = Object.select().where(Object.title == title).get()
-        modified_object.longitude = longitude
-        modified_object.latitude = latitude
-        modified_object.save()
-
-        return Response(json.dumps(target_object), status=200, mimetype='application/json')
-    except (InvalidKeysError, InvalidValueError, ObjectDoesNotExistError) as e:
-        return Response(json.dumps({
-            'message': str(e),
-            'error_type': str(e.__class__.__name__)
-        }), status=422, mimetype='application/json')
+    modified_object = Object.select().where(Object.title == title).get()
+    modified_object.longitude = longitude
+    modified_object.latitude = latitude
+    modified_object.save()
+    return Response(json.dumps(target_object), status=200, mimetype='application/json')
 
 
 @app.route('/objects/delete', methods=['GET'])
+@except_validation_error_decorator
 def delete_object() -> Response:
+    """Delete object from database by title from json request"""
     data = request.json
-    try:
-        title = check_delete_request(data)
+    title = check_delete_request(data)
 
-        deleted_object = Object.select().where(Object.title == title).get()
-        Object.delete().where(Object.title == title).execute()
-
-        return Response(json.dumps({
-            'title': deleted_object.title,
-            'longitude': deleted_object.longitude,
-            'latitude': deleted_object.latitude
-        }), status=200, mimetype='application/json')
-
-    except (InvalidKeyError, InvalidValueError, ObjectDoesNotExistError) as e:
-        return Response(json.dumps({
-            'message': str(e),
-            'error_type': str(e.__class__.__name__)
-        }), status=422, mimetype='application/json')
+    deleted_object = Object.select().where(Object.title == title).get()
+    Object.delete().where(Object.title == title).execute()
+    return Response(json.dumps({
+        'title': deleted_object.title,
+        'longitude': deleted_object.longitude,
+        'latitude': deleted_object.latitude
+    }), status=200, mimetype='application/json')
 
 
 @app.route('/objects/calculate_distance', methods=['POST', 'GET'])
+@except_validation_error_decorator
 def calculate_distance() -> Response:
+    """Calculate distance between two objects from database by titles from json request"""
     titles = request.json
     first_object_title, second_second_title = check_calculate_distance_request(titles)
+
     first_object = Object.get(title=first_object_title)
     second_object = Object.get(title=second_second_title)
     distance = get_distance_between_two_objects(first_object, second_object)
     return Response(json.dumps({
-        "title": f"Response Calculate Distance between {first_object_title} and {second_second_title} \
-         in kilometers",
+        "title": f"Response Calculate Distance between {first_object_title} and {second_second_title} " +
+        "in kilometers",
         "distance": round(distance, 4)
     }), status=200, mimetype='application/json')
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

@@ -1,8 +1,8 @@
-class InvalidKeysError(Exception):
+class InvalidKeyError(Exception):
     pass
 
 
-class InvalidKeyError(Exception):
+class InvalidKeysError(Exception):
     pass
 
 
