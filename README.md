@@ -36,7 +36,7 @@ source env/bin/activate
 ```
 pip install -r Test_task/requirements.txt
 ```
-## JSON Example
+## JSON Examples
 ### Create
 ```
 {
@@ -76,6 +76,5 @@ Without json
     "first_object_title": "Moskow",
     "second_object_title": "Tyumen"
 }
-
 ```
 ***
