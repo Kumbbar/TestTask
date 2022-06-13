@@ -1,5 +1,5 @@
 ***
-# Test task for Stabilis
+# Test task for 'Stabilis'
 ## Flask REST API
 ### Method - POST
 ### PATHS
