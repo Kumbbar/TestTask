@@ -19,11 +19,11 @@ class Object(Model):
     def check_object_exists(cls, title: str) -> None:
         items_titles = [row.title for row in Object.select()]
         if title in items_titles:
-            raise ObjectAlreadyExistsError('object with this name already exists, try another title')
+            raise ObjectAlreadyExistsError(f'Object {title} already exists, try another title')
 
     @classmethod
     def check_object_not_exists(cls, title: str) -> None:
         items_titles = [row.title for row in Object.select()]
         if title not in items_titles:
-            raise ObjectDoesNotExistError('object does not exist, try another title')
+            raise ObjectDoesNotExistError(f'Object {title} does not exist, try another title')
 

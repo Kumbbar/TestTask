@@ -1,6 +1,5 @@
 from typing import Sequence
-from exceptions import InvalidKeysError, InvalidKeyError, InvalidValueError, ObjectDoesNotExistError, \
-    ObjectAlreadyExistsError
+from exceptions import InvalidKeysError, InvalidKeyError, InvalidValueError
 from database.models import Object
 from flask import Response
 import json
@@ -11,7 +10,7 @@ def _validate_key(keys: Sequence) -> None:
     if len(keys) != 1:
         raise InvalidKeyError('Missing key, required key - title')
     if keys[0].lower() != 'title':
-        raise InvalidKeyError('Invalid key name, allowed key - title')
+        raise InvalidKeyError(f'Invalid key name {keys[0].lower()}, allowed key - title')
     return None
 
 
@@ -21,7 +20,7 @@ def _validate_keys(keys: Sequence) -> None:
         raise InvalidKeysError('Missing some keys, required keys - (title, longitude, latitude)')
     for key in keys:
         if key not in ('title', 'longitude', 'latitude'):
-            raise InvalidKeysError('Invalid key names, allowed keys - (title, longitude, latitude)')
+            raise InvalidKeysError(f'Invalid key name {key}, allowed keys - (title, longitude, latitude)')
     return None
 
 
@@ -32,7 +31,7 @@ def _validate_titles_keys(keys: Sequence) -> None:
                                '(first_object_title, second_object_title)')
     for key in keys:
         if key not in ('first_object_title', 'second_object_title'):
-            raise InvalidKeysError('Invalid key names, allowed keys - (first_object_title, second_object_title)')
+            raise InvalidKeysError(f'Invalid key name {key}, allowed keys - (first_object_title, second_object_title)')
     return None
 
 
