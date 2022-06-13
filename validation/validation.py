@@ -1,8 +1,8 @@
+from flask import Response
+import json
 from typing import Sequence
 from exceptions import InvalidKeysError, InvalidKeyError, InvalidValueError
 from database.models import Object
-from flask import Response
-import json
 
 
 def _validate_key(keys: Sequence) -> None:

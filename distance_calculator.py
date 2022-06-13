@@ -1,7 +1,7 @@
-from config import OPEN_ROUTE_SERVICE_TOKEN
-from database.models import Object
 import requests
 from geopy.distance import geodesic
+from config import OPEN_ROUTE_SERVICE_TOKEN
+from database.models import Object
 
 
 def get_distance_between_two_objects(first_object: Object, second_object: Object) -> float:
