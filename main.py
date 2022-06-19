@@ -15,7 +15,7 @@ app = Flask(__name__)
 def create_object() -> Response:
     """Create new object in database with data from json request"""
     new_object = request.json
-    title, longitude, latitude = check_create_request(new_object)
+    title, longitude, latitude = check_create_request(json.dumps(new_object))
     Object.create(title=title, longitude=longitude, latitude=latitude)
     return Response(json.dumps(new_object), status=201, mimetype='application/json')
 
@@ -25,7 +25,7 @@ def create_object() -> Response:
 def get_object() -> Response:
     """Get object from database by title from json request"""
     data = request.json
-    title = check_get_request(data)
+    title = check_get_request(json.dumps(data))
     result_object = Object.get(title=title)
 
     return Response(json.dumps({
@@ -54,7 +54,7 @@ def get_many_objects() -> Response:
 def edit_object() -> Response:
     """Edit object longitude and latitude in database by title from json request"""
     target_object = request.json
-    title, longitude, latitude = check_edit_request(target_object)
+    title, longitude, latitude = check_edit_request(json.dumps(target_object))
 
     modified_object = Object.select().where(Object.title == title).get()
     modified_object.longitude = longitude
@@ -68,7 +68,7 @@ def edit_object() -> Response:
 def delete_object() -> Response:
     """Delete object from database by title from json request"""
     data = request.json
-    title = check_delete_request(data)
+    title = check_delete_request(json.dumps(data))
 
     deleted_object = Object.select().where(Object.title == title).get()
     Object.delete().where(Object.title == title).execute()
@@ -84,7 +84,7 @@ def delete_object() -> Response:
 def calculate_distance() -> Response:
     """Calculate distance between two objects from database by titles from json request"""
     titles = request.json
-    first_object_title, second_second_title = check_calculate_distance_request(titles)
+    first_object_title, second_second_title = check_calculate_distance_request(json.dumps(titles))
 
     first_object = Object.get(title=first_object_title)
     second_object = Object.get(title=second_second_title)
