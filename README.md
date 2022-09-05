@@ -40,7 +40,7 @@ pip install -r Test_task/requirements.txt
 ### Create
 ```
 {
-    "title": "Moskow2",
+    "title": "Moscow2",
     "longitude": 37.6158,
     "latitude": 55.7522
 }
@@ -48,7 +48,7 @@ pip install -r Test_task/requirements.txt
 ### Get
 ```
 {
-    "title": "Moskow2"
+    "title": "Moscow2"
 }
 ```
 
@@ -59,7 +59,7 @@ Without json
 ### Edit
 ```
 {
-    "title": "Moskow2",
+    "title": "Moscow2",
     "longitude": 37.6151,
     "latitude": 55.7528
 }
@@ -67,13 +67,13 @@ Without json
 ### Delete
 ```
 {
-    "title": "Moskow2"
+    "title": "Moscow2"
 }
 ```
 ### Calculate distance
 ```
 {
-    "first_object_title": "Moskow",
+    "first_object_title": "Moscow",
     "second_object_title": "Tyumen"
 }
 ```
