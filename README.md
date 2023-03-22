@@ -11,11 +11,6 @@
 * /objects/calculate_distance
 
 ## Testing
-### Deployed on [Heroku](https://test-task-stabilis.herokuapp.com/objects/get_many)
-```
-https://test-task-stabilis.herokuapp.com/objects/get_many
-```
-### Local testing
 ```
 git clone https://github.com/Kumbbar/Test_task.git
 ```
